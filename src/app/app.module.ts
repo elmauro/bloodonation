@@ -9,6 +9,9 @@ import { Ng2Bs3ModalModule } from 'ng2-bs3-modal/ng2-bs3-modal';
 import { AppComponent } from './app.component';
 import { DonorsComponent } from './donors/donors.component';
 
+import { Angular2Esri4Module } from 'angular2-esri4-components';
+import { EsriLoaderService } from 'angular2-esri-loader';
+
 // Define the routes
 const ROUTES = [
   {
@@ -42,9 +45,10 @@ import { DonorSaveComponent } from './donor-save/donor-save.component';
     FormsModule,
     HttpModule,
     RouterModule.forRoot(ROUTES),
-    Ng2Bs3ModalModule
+    Ng2Bs3ModalModule,
+    Angular2Esri4Module
   ],
-  providers: [DonorsService],
+  providers: [DonorsService, EsriLoaderService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

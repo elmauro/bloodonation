@@ -1,13 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Donor } from './donor';
 import { DonorsService } from '../donors.service';
 
+import { EsriLoaderService } from 'angular2-esri-loader';
+import { Esri4MapComponent } from 'angular2-esri4-components';
+
 @Component({
   selector: 'app-donors',
   templateUrl: './donors.component.html',
-  styleUrls: ['./donors.component.css']
+  styleUrls: ['./donors.component.css'],
+  providers: [EsriLoaderService]
 })
 
 export class DonorsComponent implements OnInit {
@@ -21,10 +25,24 @@ export class DonorsComponent implements OnInit {
 
   connection;
   message;
+
+  mapProperties: __esri.MapProperties = {
+    basemap: 'dark-gray'
+  };
+  mapViewProperties: __esri.MapViewProperties = {
+    center: [-118, 34.5],
+    zoom: 8
+  };
+  map: __esri.Map;
+  mapView: __esri.MapView;
+  track: __esri.Track;
+
+  @ViewChild(Esri4MapComponent) esriComponent: Esri4MapComponent;
   
   constructor(
     private router: Router,
-    private donorsService: DonorsService
+    private donorsService: DonorsService,
+    private esriLoader: EsriLoaderService
   ) { }
 
   initialize(){
@@ -37,6 +55,11 @@ export class DonorsComponent implements OnInit {
     this.connection = this.donorsService.getMessages().subscribe(message => {
       this.onGetAllDonors();
     })
+  }
+
+  onMapInit(mapInfo: {map: __esri.Map, mapView: __esri.MapView}) {
+    this.map = mapInfo.map;
+    this.mapView = mapInfo.mapView;
   }
 
   onSelect(donor: Donor): void {
