@@ -6,7 +6,7 @@ export class Donor {
 	email: string;
 	group: string;
 	ip: string;
-	lat : number;
-	lng : number;
+	lat : string;
+	lng : string;
   	__v: number;
 }

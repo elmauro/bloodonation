@@ -31,11 +31,22 @@ export class DonorSaveComponent implements OnInit {
       firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
     };
 
-    this.onSelectCurrentDonor();
+    //this.onSelectCurrentDonor();
   }
 
   ngOnInit() {
   	this.initialize();
+
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(this.setPosition.bind(this));
+    };
+  }
+
+  setPosition(position){
+    this.lat = Math.round(position.coords.latitude * 1000) / 1000;
+    this.lng = Math.round(position.coords.longitude * 1000) / 1000;
+
+    this.onSelectCurrentDonor();
   }
 
   onSave(): void {

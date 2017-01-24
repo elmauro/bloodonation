@@ -7,8 +7,8 @@ var dataSchema = new Schema({
 	email: { type: String },
 	group: { type: String },
 	ip: { type: String },
-	lat : { type: Number },
-	lng : { type: Number }
+	lat : { type: String },
+	lng : { type: String }
 });
 
 var data = module.exports = dataSchema;

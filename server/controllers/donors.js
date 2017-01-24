@@ -22,8 +22,8 @@ exports.findDonor = function(req, res) {
 
 exports.findDonorByLocation = function(req, res) {
     donor.findOne({
-        'lat' : req.params.lat,
-        'lng' : req.params.lng
+        'lat' : req.params.lat.toString(),
+        'lng' : req.params.lng.toString()
     }, 
     function(err, result) {
         if(err) return res.send(500, err.message);
@@ -45,8 +45,8 @@ exports.addDonor = function(req, res) {
         email: req.body.email,
         group: req.body.group,
         ip: req.body.ip,
-        lat: req.body.lat,
-        lng: req.body.lng
+        lat: req.body.lat.toString(),
+        lng: req.body.lng.toString()
     });
 
     _donor.save(function(err, result) {
@@ -66,8 +66,8 @@ exports.updateDonor = function(req, res) {
         _donor.email = req.body.email,
         _donor.group = req.body.group,
         _donor.ip = req.body.ip,
-        _donor.lat = req.body.lat,
-        _donor.lng = req.body.lng
+        _donor.lat = req.body.lat.toString(),
+        _donor.lng = req.body.lng.toString()
 
         _donor.save(function(err) {
             if(err) return res.send(500, err.message);
