@@ -20,7 +20,7 @@ export class DonorSaveComponent implements OnInit {
   donor: any;
   currentDonor: Donor;
   id: string;
-  ip: Ip;
+  ip: string;
 
   constructor(
   	private donorsService: DonorsService
@@ -59,16 +59,15 @@ export class DonorSaveComponent implements OnInit {
       });
     }
     else{
-      this.donorsService.getIP()
-        .then(Ip => {
-          this.donor.ip = Ip.ip;
-          
-          this.donorsService.save(this.donor)
-            .then(donorsaved => {
-              this.initialize();
-             this.modal.dismiss();
-             this.changeComponentValue();
-            });
+      this.donor.ip = this.ip;
+      this.donor.lat = this.lat;
+      this.donor.lng = this.lng;
+      
+      this.donorsService.save(this.donor)
+        .then(donorsaved => {
+          this.initialize();
+         this.modal.dismiss();
+         this.changeComponentValue();
         });
     }
   }
@@ -78,24 +77,29 @@ export class DonorSaveComponent implements OnInit {
   }
 
   onSelectCurrentDonor(){
-    this.donorsService.getCurrentDonor(this.lat, this.lng).then(donor => {
-      this.currentDonor = donor;
+    this.donorsService.getIP()
+      .then(Ip => {
+        this.ip = Ip.ip;
+        
+        this.donorsService.getCurrentDonor(this.ip).then(donor => {
+          this.currentDonor = donor;
 
-      if(this.currentDonor){
-        this.id = this.currentDonor._id;
+          if(this.currentDonor){
+            this.id = this.currentDonor._id;
 
-        this.donor = {
-          firstname: this.currentDonor.firstname, 
-          lastname: this.currentDonor.lastname, 
-          number: this.currentDonor.number,
-          email: this.currentDonor.email, 
-          group: this.currentDonor.group, 
-          ip: this.currentDonor.ip,
-          lat: this.currentDonor.lat, 
-          lng: this.currentDonor.lng
-        };  
-      }
-    });
+            this.donor = {
+              firstname: this.currentDonor.firstname, 
+              lastname: this.currentDonor.lastname, 
+              number: this.currentDonor.number,
+              email: this.currentDonor.email, 
+              group: this.currentDonor.group, 
+              ip: this.currentDonor.ip,
+              lat: this.currentDonor.lat, 
+              lng: this.currentDonor.lng
+            };  
+          }
+        });
+      });
   }
   
 }

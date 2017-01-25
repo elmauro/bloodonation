@@ -26,8 +26,8 @@ export class DonorsService {
       	.then(res => res.json() as Donor[]);
   }
 
-  getCurrentDonor(lat: number, lng: number): Promise<Donor> {
-    return this.http.get(this.donorsUrl + "/" + lat + "/" + lng)
+  getCurrentDonor(ipaddress: string): Promise<Donor> {
+    return this.http.get(this.donorsUrl + "/ipaddress/" + ipaddress)
       .toPromise()
         .then(res => res.json() as Donor);  
   }

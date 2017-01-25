@@ -51,7 +51,6 @@ io.attach( server );
 
 
 io.on('connection', function(socket){
-	socket.emit('messages', 'Hello from server');
 	exports._socket = socket;
 });
 

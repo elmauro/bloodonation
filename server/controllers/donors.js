@@ -20,14 +20,13 @@ exports.findDonor = function(req, res) {
     });
 };
 
-exports.findDonorByLocation = function(req, res) {
+exports.findDonorByIP = function(req, res) {
     donor.findOne({
-        'lat' : req.params.lat.toString(),
-        'lng' : req.params.lng.toString()
+        'ip' : req.params.ipaddress
     }, 
     function(err, result) {
         if(err) return res.send(500, err.message);
-        console.log('GET /result/lat: ' + req.params.lat + '/lng: ' + req.params.lng);
+        console.log('GET /result/ipaddress: ' + req.params.ipaddress);
         res.status(200).jsonp(result);
     });
 };
@@ -51,7 +50,7 @@ exports.addDonor = function(req, res) {
 
     _donor.save(function(err, result) {
         if(err) return res.send(500, err.message);
-        socket.emit('messages', 'success');
+        socket.emit('messages', req.body);
         res.status(200).jsonp(result);
     });
 };
@@ -71,7 +70,7 @@ exports.updateDonor = function(req, res) {
 
         _donor.save(function(err) {
             if(err) return res.send(500, err.message);
-            socket.emit('messages', 'success');
+            socket.emit('messages', req.body);
             res.status(200).jsonp(_donor);
         });
     });

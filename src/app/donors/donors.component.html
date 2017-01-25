@@ -1,21 +1,8 @@
-<div style="height: calc(100% - 64px);">
+<!--<div style="height: calc(100% - 64px);">
   <esri4-map [mapProperties]="mapProperties" [mapViewProperties]="mapViewProperties" (mapInit)="onMapInit($event)"></esri4-map>
-</div>
+</div>-->
 
-<div class="container">
-  <div class="row">
-    <div class="card card-block">
-      <button (click)="selectedDonor=null; modal.open();">You</button>
-    </div>
-  </div>
-  <br>
-  <div class="row" *ngFor="let donor of donors">
-    <div class="card card-block" *ngIf="donor.lat !== lat && donor.lng !== lng">
-      <button (click)="onSelect(donor); modal.open();">Donor</button>
-    </div>
-  </div>
-</div>
-
+<!--<app-esri-map></app-esri-map>-->
 <modal #modal>
     <modal-header [show-close]="true">
       <h4 class="modal-title">Donor Info</h4>
