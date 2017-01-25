@@ -97,21 +97,9 @@ export class DonorsComponent implements OnInit {
       attributes: lineAtt,
       popupTemplate: { // autocasts as new PopupTemplate()
         title: "Donor Info",
-        content: [{
-          type: "fields",
-          fieldInfos: [{
-            fieldName: "Firstname"
-          }, {
-            fieldName: "LastName"
-          }, {
-            fieldName: "Number"
-          }, {
-            fieldName: "Email"
-          }, {
-            fieldName: "Group"
-          }, {
-            fieldName: "IP"
-          }]
+        actions: [{
+          id: "show-donnor",
+          title: "Click to show"
         }]
       }
     });
@@ -132,6 +120,32 @@ export class DonorsComponent implements OnInit {
     }
 
     this.view.graphics.addMany([pointGraphic]);
+
+    this.view.popup.viewModel.on("trigger-action", function (event) {
+      if (event.action.id === "show-donnor") {
+        var attributes = this.view.popup.viewModel.selectedFeature.attributes;
+        var content = ''; 
+        content += '<div class="row">';
+        content += '        <div class="col-sm-6 col-md-8">';
+        content += '            <h4>';
+        content += '                ' + attributes.Firstname + ' ' + attributes.LastName + '</h4>';
+        content += '            <small><cite title="' + attributes.number + '">' + attributes.Number + '<i class="glyphicon glyphicon-map-marker">';
+        content += '            </i></cite></small>';
+        content += '            <p>';
+        content += '                <i class="glyphicon glyphicon-envelope"></i>' + attributes.Email;
+        content += '                <br />';
+        content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.Group;
+        content += '                <br />';
+        content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.IP;
+        content += '            </p>';
+        content += '        </div>';
+        content += '    </div>';
+
+        this.view.popup.content = content;
+
+          
+      }
+    });
   }
 
   ngOnInit() {
