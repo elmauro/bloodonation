@@ -53,7 +53,25 @@ export class DonorsComponent implements OnInit {
       url: '//js.arcgis.com/4.2/'
     }).then(() => {
       // load the map class needed to create a new map
-      this.esriLoader.loadModules(['esri/widgets/Track','esri/Map','esri/views/MapView','dojo/domReady!']).then(([Track,Map,MapView]) => {
+      this.esriLoader.loadModules(
+        [
+          "esri/widgets/Track",
+          "esri/Map",
+          "esri/views/MapView",
+          "esri/Graphic",
+          "esri/geometry/Point",
+          "esri/geometry/Polyline",
+          "esri/geometry/Polygon",
+          "esri/symbols/SimpleMarkerSymbol",
+          "esri/symbols/SimpleLineSymbol",
+          "esri/symbols/SimpleFillSymbol",
+          "dojo/domReady!"
+        ]).then((
+        [
+          Track, Map, MapView,
+          Graphic, Point, Polyline, Polygon,
+          SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol
+        ]) => {
 
         this.map = new Map({
           basemap: "dark-gray"
@@ -61,11 +79,120 @@ export class DonorsComponent implements OnInit {
 
         // Create the MapView
           this.view = new MapView({
-          container: this.mapEl.nativeElement,
+          container: "viewDiv",
           map: this.map,
-          center: [-116.3031, 43.6088],
-          zoom: 12
+          center: [-75.574, 6.125],
+          zoom: 8
         });
+
+        /**********************
+         * Create a point graphic
+         **********************/
+
+        // First create a point geometry (this is the location of the Titanic)
+        var point = new Point({
+          longitude: -75.574,
+          latitude: 6.125
+        });
+
+        // Create a symbol for drawing the point
+        var markerSymbol = new SimpleMarkerSymbol({
+          color: [226, 119, 40],
+          outline: { // autocasts as new SimpleLineSymbol()
+            color: [255, 255, 255],
+            width: 2
+          }
+        });
+
+        // Create an object for storing attributes related to the line
+        var lineAtt = {
+          Name: "Keystone Pipeline",
+          Owner: "TransCanada",
+          Length: "3,456 km"
+        };
+
+        // Create a graphic and add the geometry and symbol to it
+        var pointGraphic = new Graphic({
+          geometry: point,
+          symbol: markerSymbol,
+          attributes: lineAtt,
+          popupTemplate: { // autocasts as new PopupTemplate()
+            title: "{Name}",
+            content: [{
+              type: "fields",
+              fieldInfos: [{
+                fieldName: "Name"
+              }, {
+                fieldName: "Owner"
+              }, {
+                fieldName: "Length"
+              }]
+            }]
+          }
+        });
+
+        /*************************
+         * Create a polyline graphic
+         *************************/
+
+        // First create a line geometry (this is the Keystone pipeline)
+        var polyline = new Polyline({
+          paths: [
+            [-111.30, 52.68],
+            [-98, 49.5],
+            [-93.94, 29.89]
+          ]
+        });
+
+        // Create a symbol for drawing the line
+        var lineSymbol = new SimpleLineSymbol({
+          color: [226, 119, 40],
+          width: 4
+        });
+
+        /*******************************************
+         * Create a new graphic and add the geometry,
+         * symbol, and attributes to it. You may also
+         * add a simple PopupTemplate to the graphic.
+         * This allows users to view the graphic's
+         * attributes when it is clicked.
+         ******************************************/
+        var polylineGraphic = new Graphic({
+          geometry: polyline,
+          symbol: lineSymbol
+        });
+
+        /************************
+         * Create a polygon graphic
+         ************************/
+
+        // Create a polygon geometry
+        var polygon = new Polygon({
+          rings: [
+            [-64.78, 32.3],
+            [-66.07, 18.45],
+            [-80.21, 25.78],
+            [-64.78, 32.3]
+          ]
+        });
+
+        // Create a symbol for rendering the graphic
+        var fillSymbol = new SimpleFillSymbol({
+          color: [227, 139, 79, 0.8],
+          outline: { // autocasts as new SimpleLineSymbol()
+            color: [255, 255, 255],
+            width: 1
+          }
+        });
+
+        // Add the geometry and symbol to a new graphic
+        var polygonGraphic = new Graphic({
+          geometry: polygon,
+          symbol: fillSymbol
+        });
+
+        // Add the graphics to the view's graphics layer
+        this.view.graphics.addMany([pointGraphic, polylineGraphic, polygonGraphic]);
 
         this.track = new Track({
           view: this.view
