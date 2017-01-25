@@ -142,8 +142,7 @@ export class DonorsComponent implements OnInit {
         content += '    </div>';
 
         this.view.popup.content = content;
-
-          
+            
       }
     });
   }
