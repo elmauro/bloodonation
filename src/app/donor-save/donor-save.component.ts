@@ -55,7 +55,6 @@ export class DonorSaveComponent implements OnInit {
       .then(donorsaved => {
         this.onSelectCurrentDonor();
       this.modal.dismiss();
-      this.changeComponentValue();
       });
     }
     else{
@@ -67,13 +66,18 @@ export class DonorSaveComponent implements OnInit {
         .then(donorsaved => {
           this.onSelectCurrentDonor();
          this.modal.dismiss();
-         this.changeComponentValue();
         });
     }
   }
 
-  changeComponentValue(){
-    this.outputEvent.emit();
+  onDelete(){
+    if(this.id){
+      this.donorsService.delete(this.id)
+      .then(donordeleted => {
+        this.initialize();
+      this.modal.dismiss();
+      });
+    }  
   }
 
   onSelectCurrentDonor(){

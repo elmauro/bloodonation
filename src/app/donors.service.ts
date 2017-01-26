@@ -46,6 +46,13 @@ export class DonorsService {
       	.then(() => donor);
   }
 
+  delete(id: string): Promise<Donor> {
+    return this.http
+        .delete('/api/donors/' + id, {headers: this.headers})
+        .toPromise()
+        .then(res => res.json() as Donor);
+  }
+
   sendMessage(message){
     this.socket.emit('add-message', message);    
   }

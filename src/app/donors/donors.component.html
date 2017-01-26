@@ -9,7 +9,7 @@
     </modal-header>
     <modal-body>
         <div *ngIf="!selectedDonor">
-            <app-donor-save [modal]="modal" (outputEvent)= "onComponentChange($event)"></app-donor-save>
+            <app-donor-save [modal]="modal"></app-donor-save>
         </div>
         <div *ngIf="selectedDonor">
           <div class="container">

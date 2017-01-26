@@ -304,12 +304,6 @@ export class DonorsComponent implements OnInit {
     });
   }
 
-  onComponentChange(){
-   this.donorsService.getAllDonors().then(donors => {
-    this.donors = donors;
-   });
-  }
-
   onShow(){
     this.show = true;
   }
