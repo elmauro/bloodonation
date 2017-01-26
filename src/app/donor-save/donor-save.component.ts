@@ -53,7 +53,7 @@ export class DonorSaveComponent implements OnInit {
     if(this.id){
       this.donorsService.update(this.id, this.donor)
       .then(donorsaved => {
-        this.initialize();
+        this.onSelectCurrentDonor();
       this.modal.dismiss();
       this.changeComponentValue();
       });
@@ -65,7 +65,7 @@ export class DonorSaveComponent implements OnInit {
       
       this.donorsService.save(this.donor)
         .then(donorsaved => {
-          this.initialize();
+          this.onSelectCurrentDonor();
          this.modal.dismiss();
          this.changeComponentValue();
         });

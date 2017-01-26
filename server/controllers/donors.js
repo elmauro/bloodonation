@@ -50,7 +50,7 @@ exports.addDonor = function(req, res) {
 
     _donor.save(function(err, result) {
         if(err) return res.send(500, err.message);
-        socket.emit('messages', req.body);
+        socket.emit('messages', {"donor": req.body, "action": "save" });
         res.status(200).jsonp(result);
     });
 };
@@ -70,7 +70,7 @@ exports.updateDonor = function(req, res) {
 
         _donor.save(function(err) {
             if(err) return res.send(500, err.message);
-            socket.emit('messages', req.body);
+            socket.emit('messages', {"donor": req.body, "action": "edit" });
             res.status(200).jsonp(_donor);
         });
     });
@@ -82,7 +82,7 @@ exports.deleteDonor = function(req, res) {
     donor.findById(req.params.id, function(err, _donor) {
         _donor.remove(function(err) {
             if(err) return res.send(500, err.message);
-            socket.emit('messages', 'success');
+            socket.emit('messages', {"donor": _donor, "action": "delete" });
             res.status(200).send();
         })
     });

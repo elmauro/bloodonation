@@ -34,7 +34,8 @@ export class DonorsComponent implements OnInit {
   donor: Donor;
   ip: string;
   currentDonor: any;
-
+  graphic: any;
+  
   constructor(
     private router: Router,
     private donorsService: DonorsService,
@@ -92,17 +93,17 @@ export class DonorsComponent implements OnInit {
       });
 
       pointGraphic = new Graphic({
-      geometry: point,
-      symbol: markerSymbol,
-      attributes: lineAtt,
-      popupTemplate: { // autocasts as new PopupTemplate()
-        title: "Donor Info",
-        actions: [{
-          id: "show-donnor",
-          title: "Click to show"
-        }]
-      }
-    });
+        geometry: point,
+        symbol: markerSymbol,
+        attributes: lineAtt,
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "Donor Info",
+          actions: [{
+            id: "show-donnor",
+            title: "Click to show"
+          }]
+        }
+      });
 
     }else{
       markerSymbol = new SimpleMarkerSymbol({
@@ -115,36 +116,39 @@ export class DonorsComponent implements OnInit {
 
       pointGraphic = new Graphic({
         geometry: point,
-        symbol: markerSymbol
+        symbol: markerSymbol,
+        attributes: lineAtt
       });
     }
 
     this.view.graphics.addMany([pointGraphic]);
 
-    this.view.popup.viewModel.on("trigger-action", function (event) {
-      if (event.action.id === "show-donnor") {
-        var attributes = this.view.popup.viewModel.selectedFeature.attributes;
-        var content = ''; 
-        content += '<div class="row">';
-        content += '        <div class="col-sm-6 col-md-8">';
-        content += '            <h4>';
-        content += '                ' + attributes.Firstname + ' ' + attributes.LastName + '</h4>';
-        content += '            <small><cite title="' + attributes.number + '">' + attributes.Number + '<i class="glyphicon glyphicon-map-marker">';
-        content += '            </i></cite></small>';
-        content += '            <p>';
-        content += '                <i class="glyphicon glyphicon-envelope"></i>' + attributes.Email;
-        content += '                <br />';
-        content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.Group;
-        content += '                <br />';
-        content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.IP;
-        content += '            </p>';
-        content += '        </div>';
-        content += '    </div>';
+    this.view.popup.viewModel.on("trigger-action", this.updateContent.bind(this));
+  }
 
-        this.view.popup.content = content;
-            
-      }
-    });
+  updateContent(event){
+    if (event.action.id === "show-donnor") {
+      var attributes = this.view.popup.viewModel.selectedFeature.attributes;
+      var content = ''; 
+      content += '<div class="row">';
+      content += '        <div class="col-sm-12 col-md-12">';
+      content += '            <h4>';
+      content += '                ' + attributes.Firstname + ' ' + attributes.LastName + '</h4>';
+      content += '            <small><cite title="' + attributes.Number + '">' + attributes.Number + '<i class="glyphicon glyphicon-map-marker">';
+      content += '            </i></cite></small>';
+      content += '            <p>';
+      content += '                <i class="glyphicon glyphicon-envelope"></i>' + attributes.Email;
+      content += '                <br />';
+      content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.Group;
+      content += '                <br />';
+      content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.IP;
+      content += '            </p>';
+      content += '        </div>';
+      content += '    </div>';
+
+      this.view.popup.content = content;
+
+    }
   }
 
   ngOnInit() {
@@ -153,8 +157,35 @@ export class DonorsComponent implements OnInit {
       this.message = message;
       console.log(this.message);
 
-      this.drawPoint(this.esriModules, this.message, "blue");
-      //this.onGetAllDonors();
+      if(this.message.donor.ip === this.ip){
+        this.removeGraphic(this.message.donor);
+
+        if(this.message.action !== "delete"){
+          this.drawPoint(this.esriModules, this.message.donor, "red");
+        }else{
+          this.currentDonor = {
+            firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
+          };
+
+          this.currentDonor.ip = this.ip;
+
+          this.drawPoint(this.esriModules, this.currentDonor, "red"); 
+        }
+
+        this.donorsService.getCurrentDonor(this.ip).then(donor => {
+          this.currentDonor = donor;
+        });
+
+      }
+      else{
+        if(this.message.action !== "save"){
+          this.removeGraphic(this.message.donor);
+        }
+        if(this.message.action !== "delete"){
+          this.drawPoint(this.esriModules, this.message.donor, "blue"); 
+        }
+      }
+      console.log(this.view.graphics.length);
     });
 
     if(navigator.geolocation){
@@ -189,8 +220,6 @@ export class DonorsComponent implements OnInit {
           this.createMap(this.esriModules);
           this.view.on("click", this.openModal.bind(this));
 
-          this.initialize();
-
           this.donorsService.getIP()
             .then(Ip => {
               this.ip = Ip.ip;
@@ -203,8 +232,12 @@ export class DonorsComponent implements OnInit {
                     firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
                   };
 
+                  this.currentDonor.ip = this.ip;
+
                   this.drawPoint(this.esriModules, this.currentDonor, "red");
                 }
+
+                this.initialize();
 
               });
             });
@@ -218,20 +251,38 @@ export class DonorsComponent implements OnInit {
   }
 
   openModal(event){
-    var lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
-    var lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
 
-    this.donorsService.getCurrentDonor(this.ip).then(donor => {
-      this.currentDonor = donor;
+    var screenPoint = {
+      x: event.x,
+      y: event.y
+    };
 
-      if(!this.currentDonor && this.lat === lat && this.lng === lon){
-        this.selectedDonor=null;
-        this.modal.open();
+    this.view.hitTest(screenPoint)
+      .then(
+        this.getGraphics.bind(this)
+    );
+  }
+
+  getGraphics(response) {
+    this.graphic = response.results[0].graphic;
+
+    if(this.ip === this.graphic.attributes.IP){
+      this.modal.open();
+    }
+  }
+
+  removeGraphic(donor){
+    var graphic = undefined;
+
+    for(var i=0; i<this.view.graphics.length; i++){
+      if(donor.ip === this.view.graphics.items[i].attributes.IP){
+        graphic = this.view.graphics.items[i];  
       }
+    }
 
-    });
-
-    console.log(lat, lon);
+    if(graphic !== undefined){
+      this.view.graphics.remove(graphic);
+    }
   }
 
   onSelect(donor: Donor): void {
@@ -243,7 +294,11 @@ export class DonorsComponent implements OnInit {
       this.donors = donors;
 
       for(var i=0; i< this.donors.length; i++){
-        this.drawPoint(this.esriModules, this.donors[i], "blue"); 
+        if(this.donors[i].ip === this.ip){
+          this.drawPoint(this.esriModules, this.donors[i], "red"); 
+        }else{
+          this.drawPoint(this.esriModules, this.donors[i], "blue"); 
+        }
       };
 
     });
