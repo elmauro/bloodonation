@@ -1,24 +1,11 @@
-<!--<div style="height: calc(100% - 64px);">
-  <esri4-map [mapProperties]="mapProperties" [mapViewProperties]="mapViewProperties" (mapInit)="onMapInit($event)"></esri4-map>
-</div>-->
-
-<!--<app-esri-map></app-esri-map>-->
 <modal #modal>
-    <modal-header [show-close]="true">
+    <modal-header>
       <h4 class="modal-title">Donor Info</h4>
     </modal-header>
     <modal-body>
-        <div *ngIf="!selectedDonor">
-            <app-donor-save [modal]="modal"></app-donor-save>
+        <div>
+            <app-donor-save (outputEvent)= "onComponentChange($event)" [modal]="modal" [selectedDonor]="selectedDonor" [show]="show"></app-donor-save>
         </div>
-        <div *ngIf="selectedDonor">
-          <div class="container">
-            <div class="row">
-                <button (click)="onShow();" [hidden]="show">Click to show</button>
-            </div>
-          </div>
-          <app-donor-detail [donor]="selectedDonor" [hidden]="!show"></app-donor-detail>
-      </div>
     </modal-body>
     <modal-footer>
         <button type="button" class="btn btn-default" data-dismiss="modal" (click)="onHide(); modal.dismiss()">Close</button>

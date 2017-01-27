@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, SimpleChange } from '@angular/core';
 
 import { Donor } from '../donors/donor';
 import { Ip } from '../donors/ip';
@@ -12,7 +12,9 @@ import { DonorsService } from '../donors.service';
 export class DonorSaveComponent implements OnInit {
 	
   @Input() modal: any;
-  @Output() outputEvent:EventEmitter<string>=new EventEmitter();
+  @Input() selectedDonor: any;
+  @Input() show: boolean;
+  @Output() outputEvent:EventEmitter<boolean>=new EventEmitter();
   
   lat = 43.07493;
   lng = -89.381388;
@@ -22,6 +24,18 @@ export class DonorSaveComponent implements OnInit {
   id: string;
   ip: string;
 
+  ngOnChanges(changes: { selectedDonor: SimpleChange, show: SimpleChange } ) { 
+    if(changes.selectedDonor){
+      this.donor = changes.selectedDonor.currentValue;
+      this.onSelectCurrentDonor();
+    }
+    else{
+      if(changes.show){
+        this.show = changes.show.currentValue;
+      }
+    }
+  }
+
   constructor(
   	private donorsService: DonorsService
   ) { }
@@ -30,8 +44,6 @@ export class DonorSaveComponent implements OnInit {
     this.donor = {
       firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
     };
-
-    //this.onSelectCurrentDonor();
   }
 
   ngOnInit() {
@@ -102,8 +114,21 @@ export class DonorSaveComponent implements OnInit {
               lng: this.currentDonor.lng
             };  
           }
+          else{
+            this.id = undefined;
+          }
         });
       });
+  }
+
+  onShow(){
+    this.show = true;
+    this.outputEvent.emit(true);
+  }
+
+  onHide(){
+    this.show = false;
+    this.outputEvent.emit(false);
   }
   
 }

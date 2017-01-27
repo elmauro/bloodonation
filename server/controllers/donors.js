@@ -83,7 +83,7 @@ exports.deleteDonor = function(req, res) {
         _donor.remove(function(err) {
             if(err) return res.send(500, err.message);
             socket.emit('messages', {"donor": _donor, "action": "delete" });
-            res.status(200).send();
+            res.status(200).jsonp(_donor);
         })
     });
 };

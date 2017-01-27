@@ -1,23 +1,31 @@
-<form (ngSubmit)="onSave();" #personForm="ngForm">
-    <div class="form-group">
-      <label for="firstname">First Name: </label>
-      <input type="text" name="firstname" required [(ngModel)]="donor.firstname" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="lastname">Last Name: </label>
-      <input type="text" name="lastname" [(ngModel)]="donor.lastname" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="number">Number: </label>
-      <input type="text" name="number" [(ngModel)]="donor.number" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="email">Email: </label>
-      <input type="email" name="email" [(ngModel)]="donor.email" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="group">Group: </label>
-      <input type="text" name="group" [(ngModel)]="donor.group" class="form-control">
-    </div>
-    <button type="submit">Save</button>
-</form>
+<div>
+    <form (ngSubmit)="onSave();" #personForm="ngForm" [hidden]="!show">
+      <div class="form-group">
+        <label for="firstname">First Name: </label>
+        <input type="text" name="firstname" required [(ngModel)]="donor.firstname" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="lastname">Last Name: </label>
+        <input type="text" name="lastname" [(ngModel)]="donor.lastname" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="number">Number: </label>
+        <input type="text" name="number" [(ngModel)]="donor.number" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="email">Email: </label>
+        <input type="email" name="email" [(ngModel)]="donor.email" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="group">Group: </label>
+        <input type="text" name="group" [(ngModel)]="donor.group" class="form-control">
+      </div>
+      <button type="submit">Save</button>
+  </form>
+</div>
+<div class="container">
+  <div class="row">
+      <button (click)="onDelete();" [hidden]="show">Delete</button>
+      <button (click)="onShow();" [hidden]="show">Edit</button>
+  </div>
+</div>

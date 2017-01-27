@@ -27,7 +27,7 @@ export class DonorsComponent implements OnInit {
 
   show: boolean;
   donors: Donor[];
-  selectedDonor: Donor;
+  selectedDonor: any;
 
   connection;
   message: any;
@@ -44,6 +44,196 @@ export class DonorsComponent implements OnInit {
 
   initialize(){
     this.onGetAllDonors();
+  }
+
+  ngOnInit() {
+
+    this.connection = this.donorsService.getMessages().subscribe(message => {
+      this.message = message;
+      
+      if(this.message.donor.ip === this.ip){
+        this.removeGraphic(this.message.donor);
+
+        if(this.message.action !== "delete"){
+          this.drawPoint(this.esriModules, this.message.donor, "red");
+        }else{
+          this.currentDonor = {
+            firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
+          };
+
+          this.currentDonor.ip = this.ip;
+          this.selectedDonor = this.currentDonor;
+          this.onShow();
+
+          this.drawPoint(this.esriModules, this.currentDonor, "red"); 
+        }
+
+        this.donorsService.getCurrentDonor(this.ip).then(donor => {
+          this.currentDonor = donor;
+
+          if(this.currentDonor){
+            this.onHide();
+            this.selectedDonor = {
+                firstname: this.currentDonor.firstname, 
+                lastname: this.currentDonor.lastname, 
+                number: this.currentDonor.number,
+                email: this.currentDonor.email, 
+                group: this.currentDonor.group, 
+                ip: this.currentDonor.ip,
+                lat: this.currentDonor.lat, 
+                lng: this.currentDonor.lng
+              };
+          }
+          else
+          {
+            this.onShow();
+          }
+        });
+
+      }
+      else{
+        if(this.message.action !== "save"){
+          this.removeGraphic(this.message.donor);
+        }
+        if(this.message.action !== "delete"){
+          this.drawPoint(this.esriModules, this.message.donor, "blue"); 
+        }
+      }
+
+    });
+
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(this.setPosition.bind(this));
+    };
+
+    return this.esriLoader.load({
+      url: '//js.arcgis.com/4.2/'
+    }).then(() => {
+      this.esriLoader.loadModules(
+      [
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/Graphic",
+        "esri/geometry/Point",
+        "esri/geometry/Polyline",
+        "esri/geometry/Polygon",
+        "esri/symbols/SimpleMarkerSymbol",
+        "esri/symbols/SimpleLineSymbol",
+        "esri/symbols/SimpleFillSymbol",
+        "dojo/domReady!"
+      ]).then((
+      [
+        Map, MapView,
+          Graphic, Point, Polyline, Polygon,
+          SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol
+      ]) => {
+          this.esriModules = [Map, MapView,
+          Graphic, Point, Polyline, Polygon,
+          SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol];
+
+          this.createMap(this.esriModules);
+          this.view.on("click", this.openModal.bind(this));
+
+          this.donorsService.getIP()
+            .then(Ip => {
+              this.ip = Ip.ip;
+
+              this.donorsService.getCurrentDonor(this.ip).then(donor => {
+                this.currentDonor = donor;
+
+                if(!this.currentDonor){
+                  this.currentDonor = {
+                    firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
+                  };
+
+                  this.currentDonor.ip = this.ip;
+                  this.selectedDonor = this.currentDonor;
+                  this.onShow();
+
+                  this.drawPoint(this.esriModules, this.currentDonor, "red");
+                }
+                else{
+                  this.onHide();
+                }
+
+                this.initialize();
+
+              });
+            });
+      });
+    });
+  }
+
+  setPosition(position){
+    this.lat = Math.round(position.coords.latitude * 1000) / 1000;
+    this.lng = Math.round(position.coords.longitude * 1000) / 1000;
+  }
+
+  openModal(event){
+
+    var screenPoint = {
+      x: event.x,
+      y: event.y
+    };
+
+    this.view.hitTest(screenPoint)
+      .then(
+        this.getGraphics.bind(this)
+    );
+  }
+
+  getGraphics(response) {
+    this.graphic = response.results[0].graphic;
+
+    if(this.ip === this.graphic.attributes.IP){
+      this.modal.open();
+    }
+  }
+
+  removeGraphic(donor){
+    var graphic = undefined;
+
+    for(var i=0; i<this.view.graphics.length; i++){
+      if(donor.ip === this.view.graphics.items[i].attributes.IP){
+        graphic = this.view.graphics.items[i];  
+      }
+    }
+
+    if(graphic !== undefined){
+      this.view.graphics.remove(graphic);
+    }
+  }
+
+  onSelect(donor: Donor): void {
+    this.selectedDonor = donor;
+  }
+
+  onGetAllDonors(){
+    this.donorsService.getAllDonors().then(donors => {
+      this.donors = donors;
+
+      for(var i=0; i< this.donors.length; i++){
+        if(this.donors[i].ip === this.ip){
+          this.drawPoint(this.esriModules, this.donors[i], "red"); 
+        }else{
+          this.drawPoint(this.esriModules, this.donors[i], "blue"); 
+        }
+      };
+
+    });
+  }
+
+  onShow(){
+    this.show = true;
+  }
+
+  onHide(){
+    if(this.currentDonor){
+      this.show = false;
+    }
+    else{
+      this.show = true;
+    }
   }
 
   createMap([Map, MapView,
@@ -128,10 +318,15 @@ export class DonorsComponent implements OnInit {
 
   updateContent(event){
     if (event.action.id === "show-donnor") {
+
       var attributes = this.view.popup.viewModel.selectedFeature.attributes;
       var content = ''; 
-      content += '<div class="row">';
-      content += '        <div class="col-sm-12 col-md-12">';
+      content += '<div class="container">';
+      content += '  <div class="row">';
+      content += '    <div class="col-xs-12 col-sm-12 col-md-12">';
+      content += '      <div class="well well-sm">';
+      content += '        <div class="row">';
+      content += '          <div class="col-sm-12 col-md-12">';
       content += '            <h4>';
       content += '                ' + attributes.Firstname + ' ' + attributes.LastName + '</h4>';
       content += '            <small><cite title="' + attributes.Number + '">' + attributes.Number + '<i class="glyphicon glyphicon-map-marker">';
@@ -143,172 +338,20 @@ export class DonorsComponent implements OnInit {
       content += '                <br />';
       content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.IP;
       content += '            </p>';
+      content += '          </div>';
       content += '        </div>';
+      content += '      </div>';
       content += '    </div>';
+      content += '  </div>';
+      content += '</div>';
 
       this.view.popup.content = content;
 
     }
   }
 
-  ngOnInit() {
-
-    this.connection = this.donorsService.getMessages().subscribe(message => {
-      this.message = message;
-      console.log(this.message);
-
-      if(this.message.donor.ip === this.ip){
-        this.removeGraphic(this.message.donor);
-
-        if(this.message.action !== "delete"){
-          this.drawPoint(this.esriModules, this.message.donor, "red");
-        }else{
-          this.currentDonor = {
-            firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
-          };
-
-          this.currentDonor.ip = this.ip;
-
-          this.drawPoint(this.esriModules, this.currentDonor, "red"); 
-        }
-
-        this.donorsService.getCurrentDonor(this.ip).then(donor => {
-          this.currentDonor = donor;
-        });
-
-      }
-      else{
-        if(this.message.action !== "save"){
-          this.removeGraphic(this.message.donor);
-        }
-        if(this.message.action !== "delete"){
-          this.drawPoint(this.esriModules, this.message.donor, "blue"); 
-        }
-      }
-      console.log(this.view.graphics.length);
-    });
-
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(this.setPosition.bind(this));
-    };
-
-    return this.esriLoader.load({
-      url: '//js.arcgis.com/4.2/'
-    }).then(() => {
-      this.esriLoader.loadModules(
-      [
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/Graphic",
-        "esri/geometry/Point",
-        "esri/geometry/Polyline",
-        "esri/geometry/Polygon",
-        "esri/symbols/SimpleMarkerSymbol",
-        "esri/symbols/SimpleLineSymbol",
-        "esri/symbols/SimpleFillSymbol",
-        "dojo/domReady!"
-      ]).then((
-      [
-        Map, MapView,
-          Graphic, Point, Polyline, Polygon,
-          SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol
-      ]) => {
-          this.esriModules = [Map, MapView,
-          Graphic, Point, Polyline, Polygon,
-          SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol];
-
-          this.createMap(this.esriModules);
-          this.view.on("click", this.openModal.bind(this));
-
-          this.donorsService.getIP()
-            .then(Ip => {
-              this.ip = Ip.ip;
-
-              this.donorsService.getCurrentDonor(this.ip).then(donor => {
-                this.currentDonor = donor;
-
-                if(!this.currentDonor){
-                  this.currentDonor = {
-                    firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
-                  };
-
-                  this.currentDonor.ip = this.ip;
-
-                  this.drawPoint(this.esriModules, this.currentDonor, "red");
-                }
-
-                this.initialize();
-
-              });
-            });
-      });
-    });
+  onComponentChange(value){
+    this.show = value;
   }
 
-  setPosition(position){
-    this.lat = Math.round(position.coords.latitude * 1000) / 1000;
-    this.lng = Math.round(position.coords.longitude * 1000) / 1000;
-  }
-
-  openModal(event){
-
-    var screenPoint = {
-      x: event.x,
-      y: event.y
-    };
-
-    this.view.hitTest(screenPoint)
-      .then(
-        this.getGraphics.bind(this)
-    );
-  }
-
-  getGraphics(response) {
-    this.graphic = response.results[0].graphic;
-
-    if(this.ip === this.graphic.attributes.IP){
-      this.modal.open();
-    }
-  }
-
-  removeGraphic(donor){
-    var graphic = undefined;
-
-    for(var i=0; i<this.view.graphics.length; i++){
-      if(donor.ip === this.view.graphics.items[i].attributes.IP){
-        graphic = this.view.graphics.items[i];  
-      }
-    }
-
-    if(graphic !== undefined){
-      this.view.graphics.remove(graphic);
-    }
-  }
-
-  onSelect(donor: Donor): void {
-    this.selectedDonor = donor;
-  }
-
-  onGetAllDonors(){
-    this.donorsService.getAllDonors().then(donors => {
-      this.donors = donors;
-
-      for(var i=0; i< this.donors.length; i++){
-        if(this.donors[i].ip === this.ip){
-          this.drawPoint(this.esriModules, this.donors[i], "red"); 
-        }else{
-          this.drawPoint(this.esriModules, this.donors[i], "blue"); 
-        }
-      };
-
-    });
-  }
-
-  onShow(){
-    this.show = true;
-  }
-
-  onHide(){
-    this.show = false;
-  }
 }
