@@ -22,8 +22,8 @@ export class DonorsComponent implements OnInit {
   map: any;
   view: any;
 
-  lat = 43.07493;
-  lng = -89.381388;
+  lat: any;
+  lng: any;
 
   show: boolean;
   donors: Donor[];

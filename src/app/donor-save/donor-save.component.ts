@@ -16,8 +16,8 @@ export class DonorSaveComponent implements OnInit {
   @Input() show: boolean;
   @Output() outputEvent:EventEmitter<boolean>=new EventEmitter();
   
-  lat = 43.07493;
-  lng = -89.381388;
+  lat: any;
+  lng: any;
   
   donor: any;
   currentDonor: Donor;

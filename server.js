@@ -14,7 +14,7 @@ const app = express();
 
 mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/crossover', function(err, res) {
+mongoose.connect('mongodb://10.3.9.78/crossover', function(err, res) {
   if(err) throw err;
   console.log('Connected to Database');
 });

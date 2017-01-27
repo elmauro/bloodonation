@@ -22,22 +22,16 @@ const ROUTES = [
   {
     path: 'donors',
     component: DonorsComponent
-  },
-  {
-    path: 'donor-detail',
-    component: DonorDetailComponent
   }
 ];
 
 import { DonorsService } from './donors.service';
-import { DonorDetailComponent } from './donor-detail/donor-detail.component';
 import { DonorSaveComponent } from './donor-save/donor-save.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DonorsComponent,
-    DonorDetailComponent,
     DonorSaveComponent
   ],
   imports: [
