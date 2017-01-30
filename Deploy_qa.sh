@@ -2,7 +2,7 @@
 # My script
 
 #Centos 7 Yuxi Release Server
-SCRIPT1='IMAGEID=$(docker images --format {{.ID}} lce_back);'
+SCRIPT1='IMAGEID=$(docker images --format {{.ID}} bloodonation);'
 SCRIPT2='CONTAINERS=$(docker ps -aq --filter="ancestor=$IMAGEID");'
 SCRIPT3='if [ ! -z "$CONTAINERS" ]; then docker stop $CONTAINERS; docker rm -f $CONTAINERS; fi;'
 SCRIPT4='if [ ! -z "$IMAGEID" ]; then docker rmi -f $IMAGEID; fi;'

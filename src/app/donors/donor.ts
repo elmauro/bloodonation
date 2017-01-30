@@ -4,6 +4,7 @@ export class Donor {
 	lastname: string;
 	number: string;
 	email: string;
+	address: string;
 	group: string;
 	ip: string;
 	lat : string;

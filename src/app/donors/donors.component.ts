@@ -58,10 +58,9 @@ export class DonorsComponent implements OnInit {
           this.drawPoint(this.esriModules, this.message.donor, "red");
         }else{
           this.currentDonor = {
-            firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
+            firstname: '', lastname: '', number: '', email: '', address: '', group: '', ip: this.ip, lat: this.lat, lng: this.lng
           };
 
-          this.currentDonor.ip = this.ip;
           this.selectedDonor = this.currentDonor;
           this.onShow();
 
@@ -77,7 +76,8 @@ export class DonorsComponent implements OnInit {
                 firstname: this.currentDonor.firstname, 
                 lastname: this.currentDonor.lastname, 
                 number: this.currentDonor.number,
-                email: this.currentDonor.email, 
+                email: this.currentDonor.email,
+                address: this.currentDonor.address,
                 group: this.currentDonor.group, 
                 ip: this.currentDonor.ip,
                 lat: this.currentDonor.lat, 
@@ -143,10 +143,9 @@ export class DonorsComponent implements OnInit {
 
                 if(!this.currentDonor){
                   this.currentDonor = {
-                    firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
+                    firstname: '', lastname: '', number: '', email: '', address: '', group: '', ip: this.ip, lat: this.lat, lng: this.lng
                   };
 
-                  this.currentDonor.ip = this.ip;
                   this.selectedDonor = this.currentDonor;
                   this.onShow();
 
@@ -177,8 +176,8 @@ export class DonorsComponent implements OnInit {
     };
 
     this.view.hitTest(screenPoint)
-      .then(
-        this.getGraphics.bind(this)
+    .then(
+      this.getGraphics.bind(this)
     );
   }
 
@@ -250,6 +249,7 @@ export class DonorsComponent implements OnInit {
       center: [this.lng, this.lat],
       zoom: 15
     });
+
   }
 
   drawPoint([Map, MapView,
@@ -269,6 +269,7 @@ export class DonorsComponent implements OnInit {
       LastName: donor.lastname,
       Number: donor.number,
       Email: donor.email,
+      Address: donor.address,
       Group: donor.group,
       IP: donor.ip
     };
@@ -334,9 +335,9 @@ export class DonorsComponent implements OnInit {
       content += '            <p>';
       content += '                <i class="glyphicon glyphicon-envelope"></i>' + attributes.Email;
       content += '                <br />';
-      content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.Group;
+       content += '                <i class="glyphicon glyphicon-envelope"></i>' + attributes.Address;
       content += '                <br />';
-      content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.IP;
+      content += '                <i class="glyphicon glyphicon-gift"></i>' + attributes.Group;
       content += '            </p>';
       content += '          </div>';
       content += '        </div>';

@@ -42,7 +42,7 @@ export class DonorSaveComponent implements OnInit {
 
   initialize(){
     this.donor = {
-      firstname: '', lastname: '', number: '', email: '', group: '', ip: '', lat: this.lat, lng: this.lng
+      firstname: '', lastname: '', number: '', email: '', address: '', group: '', ip: '', lat: this.lat, lng: this.lng
     };
   }
 
@@ -107,7 +107,8 @@ export class DonorSaveComponent implements OnInit {
               firstname: this.currentDonor.firstname, 
               lastname: this.currentDonor.lastname, 
               number: this.currentDonor.number,
-              email: this.currentDonor.email, 
+              email: this.currentDonor.email,
+              address: this.currentDonor.address,
               group: this.currentDonor.group, 
               ip: this.currentDonor.ip,
               lat: this.currentDonor.lat, 

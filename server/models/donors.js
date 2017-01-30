@@ -5,6 +5,7 @@ var dataSchema = new Schema({
 	lastname: { type: String },
 	number: { type: String },
 	email: { type: String },
+	address: { type: String },
 	group: { type: String },
 	ip: { type: String },
 	lat : { type: String },
