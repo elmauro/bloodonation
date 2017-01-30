@@ -12,10 +12,10 @@ import { Ip } from './donors/ip';
 @Injectable()
 export class DonorsService {
 
-  private donorsUrl = 'http://localhost:8080/api/donors';
+  private donorsUrl = 'http://localhost:3000/api/donors';
   private headers = new Headers({'Content-Type': 'application/json'});
   private donor;
-  private url = 'http://localhost:8080';  
+  private url = 'http://localhost:3000';  
   private socket;
 
   constructor(private http: Http) { }

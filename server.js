@@ -14,7 +14,7 @@ const app = express();
 
 mongoose = require('mongoose');
 
-mongoose.connect('mongodb://10.3.9.78/crossover', function(err, res) {
+mongoose.connect('mongodb://localhost/crossover', function(err, res) {
   if(err) throw err;
   console.log('Connected to Database');
 });
@@ -38,7 +38,7 @@ app.get('*', (req, res) => {
 /**
  * Get port from environment and store in Express.
  */
-const port = process.env.PORT || '8080';
+const port = process.env.PORT || '3000';
 app.set('port', port);
 
 /**
