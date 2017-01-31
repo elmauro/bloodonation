@@ -10,6 +10,10 @@
     "test": "ng test",
     "pree2e": "webdriver-manager update --standalone false --gecko false",
     "e2e": "protractor",
+    "step1": "npm install --save angular2-esri4-components",
+    "step2": "npm install typings -g",
+    "step3": "typings init",
+    "step4": "typings install github:Esri/jsapi-resources/4.x/typescript/arcgis-js-api.d.ts --global --save",
     "build": "ng build && node server.js"
   },
   "private": true,
