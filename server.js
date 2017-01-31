@@ -3,8 +3,17 @@ var socket_io = require( "socket.io" );
 
 const express = require('express');
 const path = require('path');
-const http = require('http');
+//const http = require('http');
 const bodyParser = require('body-parser');
+
+var fs = require('fs');
+var https = require('https');
+var key = fs.readFileSync('./bloodonation-key.pem');
+var cert = fs.readFileSync('./bloodonation-cert.pem')
+var https_options = {
+    key: key,
+    cert: cert
+};
 
 // Get our API routes
 const api = require('./server/routes/api');
@@ -14,7 +23,7 @@ const app = express();
 
 mongoose = require('mongoose');
 
-mongoose.connect('mongodb://10.3.9.78/crossover', function(err, res) {
+mongoose.connect('mongodb://localhost/crossover', function(err, res) {
   if(err) throw err;
   console.log('Connected to Database');
 });
@@ -38,13 +47,13 @@ app.get('*', (req, res) => {
 /**
  * Get port from environment and store in Express.
  */
-const port = process.env.PORT || '3000';
+const port = process.env.PORT || '8080';
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-const server = http.createServer(app);
+const server = https.createServer(https_options, app);
 app.io = socket_io();
 var io     = app.io
 io.attach( server );

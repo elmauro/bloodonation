@@ -12,10 +12,10 @@ import { Ip } from './donors/ip';
 @Injectable()
 export class DonorsService {
 
-  private donorsUrl = 'http://localhost:3000/api/donors';
+  private donorsUrl = 'https://localhost:8080/api/donors';
   private headers = new Headers({'Content-Type': 'application/json'});
   private donor;
-  private url = 'http://localhost:3000';  
+  private url = 'https://localhost:8080';  
   private socket;
 
   constructor(private http: Http) { }
@@ -71,7 +71,7 @@ export class DonorsService {
   } 
 
   getIP(): Promise<Ip> {
-    return this.http.get("http://ipv4.myexternalip.com/json")
+    return this.http.get("https://ipv4.myexternalip.com/json")
       .toPromise()
         .then(res => res.json() as Ip);  
   }
