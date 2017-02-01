@@ -86,6 +86,10 @@ export class DonorsComponent implements OnInit {
           }
           else
           {
+            this.currentDonor = {
+              firstname: '', lastname: '', number: '', email: '', address: '', group: '', ip: this.ip, lat: this.lat, lng: this.lng
+            };
+            
             this.onShow();
           }
         });
@@ -227,7 +231,7 @@ export class DonorsComponent implements OnInit {
   }
 
   onHide(){
-    if(this.currentDonor){
+    if(this.currentDonor.firstname !== ""){
       this.show = false;
     }
     else{
