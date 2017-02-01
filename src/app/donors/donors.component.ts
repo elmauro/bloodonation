@@ -108,6 +108,9 @@ export class DonorsComponent implements OnInit {
 
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(this.setPosition.bind(this));
+    }else{
+      this.lat = 0;
+      this.lng = 0;
     };
 
     return this.esriLoader.load({

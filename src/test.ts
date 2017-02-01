@@ -1,32 +1,163 @@
-import './polyfills.ts';
+import 'zone.js';
+import 'reflect-metadata';
 
-import 'zone.js/dist/long-stack-trace-zone';
-import 'zone.js/dist/proxy.js';
-import 'zone.js/dist/sync-test';
-import 'zone.js/dist/jasmine-patch';
-import 'zone.js/dist/async-test';
-import 'zone.js/dist/fake-async-test';
-import { getTestBed } from '@angular/core/testing';
+import {DonorsService} from './app/donors.service';
+import { Donor } from './donors/donor';
+import { Ip } from './donors/ip';
+
 import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting
-} from '@angular/platform-browser-dynamic/testing';
+  TestBed, inject
+} from '@angular/core/testing';
 
-// Unfortunately there's no typing for the `__karma__` variable. Just declare it as any.
-declare var __karma__: any;
-declare var require: any;
+class MockTestService extends DonorsService {
+  public getAllDonors(): Promise<Donor[]> {
+    return [];
+  }
 
-// Prevent Karma from running prematurely.
-__karma__.loaded = function () {};
+  public getCurrentDonor(ipaddress: string): Promise<Donor> {
+    return {
+		_id: "";
+		firstname: "";
+		lastname: "";
+		number: "";
+		email: "";
+		address: "";
+		group: "";
+		ip: "";
+		lat : "";
+		lng : "";
+	  	__v: 0;
+	    };  
+  	}
 
-// First, initialize the Angular testing environment.
-getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting()
-);
-// Then we find all the tests.
-const context = require.context('./', true, /\.spec\.ts$/);
-// And load the modules.
-context.keys().map(context);
-// Finally, start Karma to run the tests.
-__karma__.start();
+  public getIP(): Promise<Ip> {
+    return { ip: "10.3.9.57"; };
+  }
+
+  public save(donor: Donor): Promise<Donor> {
+    return {
+		"firstname": "Mauricio",
+		"lastname": "Cadavid",
+		"number": "3116344194",
+		"email": "elmauro@gmail.com",
+		"address": "Avenida Las Vegas 12, Simesa, El Poblado, Medellín, Antioquia",
+		"group": "O+",
+		"ip": "181.48.149.130",
+		"lat": "6.225",
+		"lng": "-75.574"
+    };
+  }
+
+  public update(): Promise<Donor> {
+    return {
+		"firstname": "Mauricio",
+		"lastname": "Cadavid",
+		"number": "3116344194",
+		"email": "elmauro@gmail.com",
+		"address": "Avenida Las Vegas 12, Simesa, El Poblado, Medellín, Antioquia",
+		"group": "O+",
+		"ip": "181.48.149.130",
+		"lat": "6.225",
+		"lng": "-75.574"
+    };
+  }
+
+  public delete(): Promise<Donor> {
+    return {
+		"firstname": "Mauricio",
+		"lastname": "Cadavid",
+		"number": "3116344194",
+		"email": "elmauro@gmail.com",
+		"address": "Avenida Las Vegas 12, Simesa, El Poblado, Medellín, Antioquia",
+		"group": "O+",
+		"ip": "181.48.149.130",
+		"lat": "6.225",
+		"lng": "-75.574"
+    };
+  }
+}
+
+describe('DonorsService', () => {
+	
+  donorService: DonorsService;
+
+  beforeEach(() => {
+  	this.donorsService = new MockTestService();
+  });
+
+  it('get all donors', () => {
+    expect(this.donorsService.getAllDonors()).toEqual([]);
+  }));
+
+  it('get ip', () => {
+    expect(this.donorsService.getIP().ip).toEqual("10.3.9.57");
+  }));
+
+  it('get current donor', () => {
+    expect(this.donorsService.getCurrentDonor()).toEqual(
+    	{
+		_id: "";
+		firstname: "";
+		lastname: "";
+		number: "";
+		email: "";
+		address: "";
+		group: "";
+		ip: "";
+		lat : "";
+		lng : "";
+	  	__v: 0;
+	    };  
+  	}	
+    );
+  }));
+
+  it('save donor', () => {
+    expect(this.donorsService.save()).toEqual(
+    	{
+			"firstname": "Mauricio",
+			"lastname": "Cadavid",
+			"number": "3116344194",
+			"email": "elmauro@gmail.com",
+			"address": "Avenida Las Vegas 12, Simesa, El Poblado, Medellín, Antioquia",
+			"group": "O+",
+			"ip": "181.48.149.130",
+			"lat": "6.225",
+			"lng": "-75.574"
+		}
+    );
+  }));
+
+  it('update donor', () => {
+    expect(this.donorsService.update()).toEqual(
+    	{
+			"firstname": "Mauricio",
+			"lastname": "Cadavid",
+			"number": "3116344194",
+			"email": "elmauro@gmail.com",
+			"address": "Avenida Las Vegas 12, Simesa, El Poblado, Medellín, Antioquia",
+			"group": "O+",
+			"ip": "181.48.149.130",
+			"lat": "6.225",
+			"lng": "-75.574"
+		}
+    );
+  }));
+
+  it('delete donor', () => {
+    expect(this.donorsService.delete()).toEqual(
+    	{
+			"firstname": "Mauricio",
+			"lastname": "Cadavid",
+			"number": "3116344194",
+			"email": "elmauro@gmail.com",
+			"address": "Avenida Las Vegas 12, Simesa, El Poblado, Medellín, Antioquia",
+			"group": "O+",
+			"ip": "181.48.149.130",
+			"lat": "6.225",
+			"lng": "-75.574"
+		}
+    );
+  }));
+
+});
