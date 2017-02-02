@@ -60,6 +60,8 @@ exports.updateDonor = function(req, res) {
     var socket = require('../../server')._socket;
 
     donor.findById(req.params.id, function(err, _donor) {
+        if(err) return res.send(500, err.message);
+
         _donor.firstname = req.body.firstname,
         _donor.lastname = req.body.lastname,
         _donor.number = req.body.number,
@@ -82,6 +84,8 @@ exports.deleteDonor = function(req, res) {
     var socket = require('../../server')._socket;
 
     donor.findById(req.params.id, function(err, _donor) {
+        if(err) return res.send(500, err.message);
+        
         _donor.remove(function(err) {
             if(err) return res.send(500, err.message);
             socket.emit('messages', {"donor": _donor, "action": "delete" });
