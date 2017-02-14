@@ -10,10 +10,10 @@ blood donation management system to facilitate the patients from all around the 
 
 ## Instalation
 
-	Asumptions on the code
+Asumptions on the code
 	
-	1. Custom ssl certificate into code for calling navigator.geolocation.getCurrentPosition to get current location from https server
-	2. calling external Api to get the current IP address
+1. Custom ssl certificate into code for calling navigator.geolocation.getCurrentPosition to get current location from https server
+2. calling external Api to get the current IP address
 
 a. Install with npm
 
