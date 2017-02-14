@@ -1,31 +1,104 @@
 # Bloodonation
 
-This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.25.5.
+blood donation management system to facilitate the patients from all around the world, find blood donors near them
 
-## Development server
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Asumptions
 
-## Code scaffolding
+1. MongoDB local installed and running without user and password
+2. NodeJS installed ... I was working with a version 6.x
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
 
-## Build
+## Instalation
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+	Asumptions on the code
+	
+	1. Custom ssl certificate into code for calling navigator.geolocation.getCurrentPosition to get current location from https server
+	2. calling external Api to get the current IP address
 
-## Running unit tests
+a. Install with npm
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+1. npm install
+2. npm run build
+3. open https://localhost:8080
+4. reload if the page doesn't show the map
 
-## Running end-to-end tests
+b. Install with Docker (assuming docker installed on current machine)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+1. change the line on server.js
 
-## Deploying to GitHub Pages
+	mongodb://localhost/crossover with
+	mongodb://[ip mongodb server]/crossover (the IP must to be a valid mongodb access IP)
+	e.g
+	mongodb://10.3.9.57/crossover
 
-Run `ng github-pages:deploy` to deploy to GitHub Pages.
+2. change the lines on donors.services.js
 
-## Further help
+	https://localhost:8080/api/donors with
+	https://192.168.99.100:8080/api/donors
 
-To get more help on the `angular-cli` use `ng help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+	https://localhost:8080 with
+	https://192.168.99.100:8080
+
+3. docker build -t bloodonation .
+4. docker run --name bloodonation -p 8080:8080 bloodonation
+5. open https://localhost:8080
+6. reload if the page doesn't show the map
+
+
+## Use the API to reflect changes with socket.io
+
+GET
+https://localhost:8080/api/donors
+
+GET
+https://localhost:8080/api/donors/id_donor
+
+POST
+https://localhost:8080/api/donors
+{
+	"firstname": "Test1",
+	"lastname": "Test1",
+	"number": "3116344194",
+	"email": "test1@gmail.com",
+	"address": "address1",
+	"group": "O+",
+	"ip": "181.48.149.130",
+	"lat": "6.225",
+	"lng": "-75.574"
+}
+
+PUT
+https://localhost:8080/api/donors/donor_id
+{
+  "firstnamename": "Test1XXX",
+  "lastname": "Test1XXX",
+  "number": "3116344194",
+  "email": "test1xxx@gmail.com",
+  "address": "address1xxx",
+  "group": "O+",
+  "ip": "181.48.149.130",
+  "lat": "6.225",
+  "lng": "-75.574"
+}
+
+DEL
+https://localhost:8080/api/donors/donor_id
+
+GET
+https://localhost:8080/api/donors/ipaddress/ip_number
+
+
+## For Testing
+
+	Execute:
+
+	1. npm test
+
+
+## Future Work
+
+1. work with valid ssh certificate
+2. work into cloud server (AWS - Google Cloude - Azure). The deploy can be doing with Docker and 
+   mapping with public IP
+3. Separate the graphic part on donors into a new service
+
